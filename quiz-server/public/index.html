@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КРУТАЯ ИГРА</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .status-bar {
+            display: flex;
+            gap: 30px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .status-item {
+            display: flex;
+            flex-direction: column;
+            min-width: 120px;
+        }
+        
+        .status-label {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .status-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #3498db;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        button.round {
+            background: #27ae60;
+        }
+        
+        button.reset {
+            background: #e74c3c;
+        }
+        
+        .round-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .question-display {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        #currentQuestionText {
+            font-size: 20px;
+            margin: 0 0 20px 0;
+            min-height: 60px;
+        }
+        
+        .answers {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .answers {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .answer {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            transition: all 0.3s ease;
+        }
+        
+        .answer.correct {
+            border-color: #27ae60;
+            background: #d4edda;
+        }
+        
+        .answer-letter {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .meme-image-container {
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .meme-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .participants-container {
+            margin-top: 30px;
+        }
+        
+        .participants-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .all-answered-badge {
+            background: #27ae60;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .all-answered-badge.show {
+            display: inline-block;
+        }
+        
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 1200px) {
+            .participants-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .participants-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .participant {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 3px solid transparent;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .participant.answered {
+            border-color: #27ae60;
+            background: #d4edda;
+        }
+        
+        .participant-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .answers-stats {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            display: none;
+        }
+        
+        .answers-stats.show {
+            display: block;
+        }
+        
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .stats-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .stats-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .stats-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .add-score-btn {
+            padding: 5px 10px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .add-score-btn:hover {
+            background: #219653;
+        }
+        
+        .round-statistics {
+            display: none;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .round-statistics.show {
+            display: block;
+        }
+        
+        .statistics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .statistics-table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .statistics-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .statistics-table tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            max-width: 350px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .notification.error {
+            border-left-color: #e74c3c;
+        }
+        
+        .notification.error i {
+            color: #e74c3c;
+        }
+        
+        .telegram-info {
+            background: #0088cc;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .online {
+            color: #27ae60;
+        }
+        
+        .offline {
+            color: #e74c3c;
+        }
+        
+        .admin-controls {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .score-control {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .score-input {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 60px;
+        }
+
+        /* Добавляем в стили */
+        .admin-controls {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none; /* По умолчанию скрыт */
+        }
+
+        .admin-controls.visible {
+            display: block;
+        }
+
+        .video-controls {
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .video-controls.visible {
+            display: block;
+        }
+
+        .watch-video-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #FF006E 0%, #8338EC 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 auto;
+        }
+
+        .watch-video-btn:hover {
+            background: linear-gradient(135deg, #E60063 0%, #6A2AC9 100%);
+            transform: translateY(-2px);
+        }
+        
+        /* Добавляем стиль для кнопки обновления */
+        .refresh-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #2980b9;
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-gamepad"></i> КРУТАЯ ИГРА</h1>
+        
+        <div class="telegram-info">
+            <i class="fab fa-telegram"></i> Telegram бот запущен! 
+            Участники регистрируются через бота, ответы приходят автоматически.
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-label">Статус подключения:</span>
+                <span id="status" class="status-value offline">Отключено</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Текущий раунд:</span>
+                <span id="currentRound" class="status-value">РазминОЧКА</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Текущий вопрос:</span>
+                <span id="currentQuestionNumber" class="status-value">1/12</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Участников:</span>
+                <span id="participantsCount" class="status-value">0</span>
+            </div>
+        </div>
+        
+        <div class="round-controls">
+            <button id="switchRound1" class="round">
+                <i class="fas fa-brain"></i> РазминОЧКА
+            </button>
+            <button id="switchRound2" class="round">
+                <i class="fas fa-image"></i> КартинОЧКА
+            </button>
+        </div>
+        
+        <div class="controls">
+            <button id="prevQuestion">
+                <i class="fas fa-arrow-left"></i> Предыдущий вопрос
+            </button>
+            <button id="nextQuestion">
+                <i class="fas fa-arrow-right"></i> Следующий вопрос
+            </button>
+            <button id="showAnswers">
+                <i class="fas fa-eye"></i> Показать ответы
+            </button>
+            <button id="resetRound" class="reset">
+                <i class="fas fa-redo"></i> Сбросить раунд
+            </button>
+        </div>
+        
+        <div class="question-display">
+            <h3 id="currentQuestionText">Загрузка вопроса...</h3>
+            <div id="memeImageContainer" class="meme-image-container">
+                <img id="memeImage" class="meme-image" src="" alt="Мем">
+            </div>
+            <div id="answersContainer" class="answers">
+                <!-- Ответы будут добавлены через JavaScript -->
+            </div>
+        </div>
+
+        <div id="videoControls" class="video-controls">
+            <button id="watchVideoBtn" class="watch-video-btn">
+                <i class="fas fa-video"></i> Смотреть видео
+            </button>
+        </div>
+        
+        <div class="participants-container">
+            <div class="participants-header">
+                <h3><i class="fas fa-users"></i> Участники</h3>
+                <div id="allAnsweredBadge" class="all-answered-badge">
+                    <i class="fas fa-check-circle"></i> Все ответили
+                </div>
+            </div>
+            <div id="participantsGrid" class="participants-grid">
+                <!-- Участники будут добавлены через JavaScript -->
+            </div>
+        </div>
+        
+        <div class="answers-stats" id="answersStats">
+            <h3><i class="fas fa-chart-bar"></i> Статистика ответов</h3>
+            <div id="statsContainer">
+                <p>Ожидаем ответов от участников...</p>
+            </div>
+        </div>
+        
+        <!-- В блоке round-statistics -->
+        <div class="round-statistics" id="roundStatistics">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3><i class="fas fa-trophy"></i> Статистика раунда</h3>
+                <button id="refreshStatsBtn" class="refresh-btn" title="Обновить статистику">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div id="statisticsContainer">
+                <!-- Статистика будет добавлена через JavaScript -->
+            </div>
+        </div>
+        
+        <div id="adminControls" class="admin-controls">
+            <h4><i class="fas fa-user-shield"></i> Ручное добавление баллов</h4>
+            <div class="score-control">
+                <select id="participantSelect">
+                    <option value="">Выберите участника</option>
+                </select>
+                <input type="number" id="scoreInput" class="score-input" value="1" min="1" max="10">
+                <button id="addScoreBtn">
+                    <i class="fas fa-plus-circle"></i> Добавить баллы
+                </button>
+            </div>
+            <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                <i class="fas fa-info-circle"></i> Доступно только во время раунда "КартинОЧКА"
+            </p>
+        </div>
+    </div>
+    
+    <div id="notification" class="notification">
+        <i class="fas fa-bell"></i>
+        <span id="notificationText">Уведомление</span>
+    </div>
+    
+    <!-- Socket.io клиентская библиотека -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        class QuizClient {
+            constructor() {
+                this.socket = null;
+                this.currentRound = 1;
+                this.currentQuestion = 0;
+                this.participants = [];
+                this.answers = {};
+                this.scores = {};
+                this.showAnswers = false;
+                this.statsVisible = false;
+                this.allAnswered = false;
+
+                this.questions = {
+                    round1: [],
+                    round2: []
+                };
+
+                // ДОБАВЬТЕ ЭТИ СВОЙСТВА:
+                this.currentQuestionVideoShown = false; // Флаг для отслеживания показа видео
+                this.currentQuestionVideoUrl = null; // URL видео для текущего вопроса
+                this.roundStatistics = null; // Статистика раунда
+                this.isLastQuestionReached = false; // Добавляем флаг последнего вопроса
+
+                this.init();
+
+            }
+            
+            init() {
+                this.connectWebSocket();
+                this.setupEventListeners();
+                this.setupKeyboardShortcuts();
+            }
+            
+            connectWebSocket() {
+                this.socket = io();
+                
+                this.socket.on('connect', () => {
+                    console.log('Подключено к серверу');
+                    this.updateStatus('online', 'Подключено');
+                    this.showNotification('Подключено к серверу');
+                });
+                
+                this.socket.on('connect_error', (error) => {
+                    console.error('Ошибка подключения:', error);
+                    this.updateStatus('offline', 'Ошибка подключения');
+                });
+                
+                this.socket.on('disconnect', () => {
+                    console.log('Отключено от сервера');
+                    this.updateStatus('offline', 'Отключено');
+                });
+                
+                this.socket.on('gameState', (data) => {
+                    console.log('Получено состояние игры:', data);
+                    if (data && data.data) {
+                        this.updateGameState(data.data);
+                        // Если статистика раунда уже была показана и пришло обновленное состояние,
+                        // перерисовываем статистику
+                        if (this.roundStatistics && document.getElementById('roundStatistics').classList.contains('show')) {
+                            this.showRoundStatistics(this.roundStatistics);
+                        }
+                    }
+                });
+                
+                this.socket.on('newParticipant', (data) => {
+                    console.log('Новый участник:', data);
+                    this.addParticipant(data);
+                    this.showNotification(`Новый участник: ${data.name}`);
+                });
+                
+                this.socket.on('newAnswer', (data) => {
+                    console.log('Новый ответ:', data);
+                    this.processAnswer(data);
+                    
+                    const answerLetters = ['A', 'B', 'C', 'D'];
+                    const answerText = data.round === 1 ? 
+                        `Ответ ${answerLetters[data.answer] || data.answer}` : 
+                        `Текстовый ответ`;
+                    
+                    this.showNotification(`${data.userName}: ${answerText}`);
+                    
+                    // Проверяем, все ли ответили
+                    this.checkAllAnswered();
+                });
+                
+                this.socket.on('roundStatistics', (data) => {
+                    console.log('Статистика раунда:', data);
+                    this.roundStatistics = data.data;
+                    this.showRoundStatistics(data.data);
+                });
+                
+                this.socket.on('error', (data) => {
+                    console.error('Ошибка от сервера:', data);
+                    if (data.message === 'Не все участники ответили на вопрос') {
+                        alert('Не все участники ответили на вопрос!');
+                    }
+                });
+            }
+            
+            updateGameState(state) {
+                this.currentRound = state.currentRound || 1;
+                this.currentQuestion = state.currentQuestion || 0;
+                this.participants = state.participants ? Object.values(state.participants).filter(p => p.registered) : [];
+                this.answers = state.answers || {};
+                this.scores = state.scores || {};
+                this.showAnswers = state.showAnswers || false;
+                this.statsVisible = state.showStats || false;
+                this.roundStatistics = state.roundStatistics || null;
+                
+                // Определяем, достигнут ли последний вопрос
+                const maxQuestions = this.currentRound === 1 ? 12 : 10;
+                this.isLastQuestionReached = (this.currentQuestion === maxQuestions - 1) && this.showAnswers;
+                
+                if (state.questions) {
+                    this.questions = state.questions;
+                }
+                
+                this.updateUI();
+            }
+            
+            updateUI() {
+                // Обновляем отображение
+                const roundNames = { 1: 'РазминОЧКА', 2: 'КартинОЧКА' };
+                document.getElementById('currentRound').textContent = roundNames[this.currentRound];
+                
+                // Обновляем номер вопроса с учетом разных раундов
+                const maxQuestions = this.currentRound === 1 ? 12 : 10;
+                document.getElementById('currentQuestionNumber').textContent = 
+                    `${this.currentQuestion + 1}/${maxQuestions}`;
+                
+                document.getElementById('participantsCount').textContent = this.participants.length;
+                
+                // Обновляем вопрос
+                this.updateQuestionDisplay();
+                
+                // Обновляем участников
+                this.renderParticipants();
+                
+                // Обновляем статистику
+                if (this.statsVisible) {
+                    this.updateStats();
+                }
+                
+                // Показываем/скрываем статистику
+                const statsContainer = document.getElementById('answersStats');
+                if (this.statsVisible && this.showAnswers) {
+                    statsContainer.classList.add('show');
+                } else {
+                    statsContainer.classList.remove('show');
+                }
+                
+                // Обновляем кнопку "Показать ответы"
+                const showAnswersBtn = document.getElementById('showAnswers');
+                if (this.showAnswers) {
+                    showAnswersBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Скрыть ответы';
+                } else {
+                    showAnswersBtn.innerHTML = '<i class="fas fa-eye"></i> Показать ответы';
+                }
+                
+                // Проверяем, все ли ответили
+                this.checkAllAnswered();
+                
+                // Обновляем список участников для ручного добавления баллов
+                this.updateParticipantSelect();
+                
+                // Управление видимостью блоков
+                this.updateControlsVisibility();
+                
+                // Проверяем и обновляем видео-контролы
+                this.updateVideoControls();
+
+                // Показываем статистику раунда только на последнем вопросе с показанными ответами
+                const statisticsDiv = document.getElementById('roundStatistics');
+                if (this.isLastQuestionReached && this.roundStatistics) {
+                    statisticsDiv.classList.add('show');
+                    // Перерисовываем статистику с актуальными данными
+                    this.showRoundStatistics(this.roundStatistics);
+                } else {
+                    statisticsDiv.classList.remove('show');
+                }
+            }
+
+            // Новый метод для управления видимостью блоков
+            updateControlsVisibility() {
+                const adminControls = document.getElementById('adminControls');
+                const roundStatistics = document.getElementById('roundStatistics');
+                
+                // Блок ручного добавления баллов показываем только в раунде 2
+                if (this.currentRound === 2) {
+                    adminControls.classList.add('visible');
+                } else {
+                    adminControls.classList.remove('visible');
+                }
+                
+                // Статистику раунда показываем только если есть данные
+                if (this.roundStatistics) {
+                    roundStatistics.classList.add('show');
+                } else {
+                    roundStatistics.classList.remove('show');
+                }
+            }
+
+            // Новый метод для обновления видео-контролов
+            updateVideoControls() {
+                const videoControls = document.getElementById('videoControls');
+                const watchVideoBtn = document.getElementById('watchVideoBtn');
+                
+                // Показываем видео-контролы только во 2 раунде и когда показаны ответы
+                if (this.currentRound === 2 && this.showAnswers && !this.currentQuestionVideoShown) {
+                    // Запрашиваем информацию о видео у сервера
+                    this.socket.emit('getQuestionVideo', {
+                        round: this.currentRound,
+                        questionIndex: this.currentQuestion
+                    }, (data) => {
+                        if (data.videoUrl) {
+                            // Сохраняем URL видео для текущего вопроса
+                            this.currentQuestionVideoUrl = data.videoUrl;
+                            videoControls.classList.add('visible');
+                            
+                            // Обновляем обработчик клика
+                            watchVideoBtn.onclick = () => {
+                                this.watchVideo();
+                            };
+                        } else {
+                            videoControls.classList.remove('visible');
+                        }
+                    });
+                } else {
+                    videoControls.classList.remove('visible');
+                }
+            }
+
+            // Новый метод для просмотра видео
+            watchVideo() {
+                if (this.currentQuestionVideoUrl) {
+                    // Открываем видео в новом окне
+                    window.open(this.currentQuestionVideoUrl, '_blank');
+                    
+                    // Устанавливаем флаг, что видео показано для этого вопроса
+                    this.currentQuestionVideoShown = true;
+                    
+                    // Скрываем кнопку после нажатия
+                    document.getElementById('videoControls').classList.remove('visible');
+                }
+            }
+            
+            updateQuestionDisplay() {
+                const roundKey = `round${this.currentRound}`;
+                const question = this.questions[roundKey] ? 
+                    this.questions[roundKey][this.currentQuestion] : null;
+                
+                const questionText = document.getElementById('currentQuestionText');
+                const answersContainer = document.getElementById('answersContainer');
+                const memeImageContainer = document.getElementById('memeImageContainer');
+                const memeImage = document.getElementById('memeImage');
+                
+                if (question) {
+                    if (this.currentRound === 1) {
+                        // Раунд 1: РазминОЧКА
+                        questionText.textContent = question.text || `Вопрос ${this.currentQuestion + 1}`;
+                        memeImageContainer.style.display = 'none';
+                        
+                        let answersHTML = '';
+                        const answerLetters = ['A', 'B', 'C', 'D'];
+                        
+                        question.answers.forEach((answer, index) => {
+                            const isCorrect = this.showAnswers && index === question.correct;
+                            answersHTML += `
+                                <div class="answer ${isCorrect ? 'correct' : ''}">
+                                    <span class="answer-letter">${answerLetters[index]}</span>
+                                    ${answer}
+                                    ${isCorrect ? ' <i class="fas fa-check" style="color: #27ae60;"></i>' : ''}
+                                </div>
+                            `;
+                        });
+                        
+                        answersContainer.innerHTML = answersHTML;
+                    } else {
+                        // Раунд 2: КартинОЧКА
+                        questionText.textContent = question.text || `Мем ${this.currentQuestion + 1}`;
+                        
+                        // Показываем изображение
+                        if (question.imageUrl) {
+                            memeImage.src = question.imageUrl;
+                            memeImageContainer.style.display = 'block';
+                        } else {
+                            memeImageContainer.style.display = 'none';
+                        }
+                        
+                        // Для второго раунда показываем инструкцию
+                        answersContainer.innerHTML = `
+                            <div style="grid-column: span 2; text-align: center; padding: 40px;">
+                                <i class="fas fa-image fa-4x" style="color: #3498db; margin-bottom: 20px;"></i>
+                                <p><strong>Раунд "КартинОЧКА"</strong></p>
+                                <p>Участники отправляют текстовые ответы через Telegram бота</p>
+                                ${this.showAnswers && question.memeName ? 
+                                    `<p style="margin-top: 20px; color: #27ae60; font-weight: bold;">
+                                        <i class="fas fa-lightbulb"></i> Правильный ответ: ${question.memeName}
+                                    </p>` : ''
+                                }
+                            </div>
+                        `;
+                    }
+                } else {
+                    questionText.textContent = 'Вопрос не найден';
+                    answersContainer.innerHTML = '<p>Загрузка вопроса...</p>';
+                }
+            }
+            
+            renderParticipants() {
+                const container = document.getElementById('participantsGrid');
+                let participantsHTML = '';
+                
+                this.participants.forEach(participant => {
+                    const answered = this.hasParticipantAnswered(participant);
+                    
+                    participantsHTML += `
+                        <div class="participant ${answered ? 'answered' : ''}">
+                            <!-- Убран participant-score -->
+                            <div class="participant-circle" style="background: ${participant.color || '#3498db'}">
+                                ${participant.name ? participant.name.charAt(0).toUpperCase() : '?'}
+                            </div>
+                            <div><strong>${participant.name || 'Неизвестный'}</strong></div>
+                            <small style="color: ${answered ? '#27ae60' : '#666'}">
+                                ${answered ? '✓ Ответил' : 'Ожидает'}
+                            </small>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = participantsHTML || '<p>Нет участников</p>';
+            }
+            
+            hasParticipantAnswered(participant) {
+                const answerId = `${this.currentRound}_${this.currentQuestion}`;
+                return this.answers[answerId] && 
+                    Object.values(this.answers[answerId]).some(answer => 
+                        answer.userName === participant.name);
+            }
+            
+            checkAllAnswered() {
+                const answerId = `${this.currentRound}_${this.currentQuestion}`;
+                const currentAnswers = this.answers[answerId] || {};
+                const participantsCount = this.participants.length;
+                const answeredCount = Object.keys(currentAnswers).length;
+                
+                this.allAnswered = participantsCount > 0 && answeredCount >= participantsCount;
+                
+                const badge = document.getElementById('allAnsweredBadge');
+                if (this.allAnswered && participantsCount > 0) {
+                    badge.classList.add('show');
+                } else {
+                    badge.classList.remove('show');
+                }
+                
+                return this.allAnswered;
+            }
+
+            updateStats() {
+                const container = document.getElementById('statsContainer');
+                const answerId = `${this.currentRound}_${this.currentQuestion}`;
+                const currentAnswers = this.answers[answerId] || {};
+                
+                const answersArray = Object.values(currentAnswers);
+                
+                if (answersArray.length === 0) {
+                    container.innerHTML = '<p>Ожидаем ответов от участников...</p>';
+                    return;
+                }
+                
+                // Для раунда 2 - только участник и ответ
+                if (this.currentRound === 2) {
+                    let statsHTML = `
+                        <p>Всего ответов: <strong>${answersArray.length}/${this.participants.length}</strong></p>
+                        <table class="stats-table">
+                            <thead>
+                                <tr>
+                                    <th>Участник</th>
+                                    <th>Ответ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    answersArray.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+                        .forEach(answer => {
+                            statsHTML += `
+                                <tr>
+                                    <td><strong>${answer.userName || 'Неизвестный'}</strong></td>
+                                    <td>${answer.answer}</td>
+                                </tr>
+                            `;
+                        });
+                    
+                    statsHTML += `
+                            </tbody>
+                        </table>
+                    `;
+                    
+                    container.innerHTML = statsHTML;
+                } else {
+                    // Для раунда 1 - старая логика
+                    let statsHTML = `
+                        <p>Всего ответов: <strong>${answersArray.length}/${this.participants.length}</strong></p>
+                        <table class="stats-table">
+                            <thead>
+                                <tr>
+                                    <th>Участник</th>
+                                    <th>Ответ</th>
+                                    <th>Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    const answerLetters = ['A', 'B', 'C', 'D'];
+                    
+                    answersArray.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+                        .forEach(answer => {
+                            statsHTML += `
+                                <tr>
+                                    <td><strong>${answer.userName || 'Неизвестный'}</strong></td>
+                                    <td>${answerLetters[answer.answer] || answer.answer}</td>
+                                    <td>
+                                        <span style="color: ${answer.isCorrect ? '#27ae60' : '#e74c3c'}">
+                                            ${answer.isCorrect ? '✅ Верно' : '❌ Неверно'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    
+                    statsHTML += `
+                            </tbody>
+                        </table>
+                    `;
+                    
+                    container.innerHTML = statsHTML;
+                }
+            }
+            
+            addParticipant(data) {
+                const existingIndex = this.participants.findIndex(p => 
+                    p.name === data.name);
+                
+                if (existingIndex === -1) {
+                    this.participants.push({
+                        userId: data.userId,
+                        name: data.name,
+                        color: data.color || this.getRandomColor()
+                    });
+                    
+                    this.renderParticipants();
+                    this.updateParticipantSelect();
+                }
+            }
+            
+            updateParticipantSelect() {
+                const select = document.getElementById('participantSelect');
+                select.innerHTML = '<option value="">Выберите участника</option>';
+                
+                this.participants.forEach(participant => {
+                    const userId = Object.keys(this.participants).find(key => 
+                        this.participants[key] && this.participants[key].name === participant.name);
+                    
+                    if (userId) {
+                        const option = document.createElement('option');
+                        option.value = userId;
+                        option.textContent = participant.name; // Только имя
+                        select.appendChild(option);
+                    }
+                });
+            }
+            
+            processAnswer(data) {
+                const answerId = data.answerId || `${this.currentRound}_${this.currentQuestion}`;
+                
+                if (!this.answers[answerId]) {
+                    this.answers[answerId] = {};
+                }
+                
+                this.answers[answerId][data.userId] = {
+                    answer: data.answer,
+                    isCorrect: data.isCorrect,
+                    userName: data.userName,
+                    timestamp: data.timestamp || new Date().toISOString(),
+                    round: data.round
+                };
+                
+                // Обновляем UI
+                this.renderParticipants();
+                if (this.statsVisible) {
+                    this.updateStats();
+                }
+                this.checkAllAnswered();
+            }
+            
+            addManualScore(userId) {
+                const points = prompt('Сколько баллов добавить этому участнику?', '1');
+                if (points && !isNaN(parseInt(points)) && parseInt(points) > 0) {
+                    this.socket.emit('addScore', { userId, points: parseInt(points) });
+                    this.showNotification(`Добавлено ${points} баллов участнику`);
+                }
+            }
+            
+            showRoundStatistics(results) {
+                const container = document.getElementById('statisticsContainer');
+                const statisticsDiv = document.getElementById('roundStatistics');
+                
+                // Показываем статистику только если это последний вопрос
+                const maxQuestions = this.currentRound === 1 ? 12 : 10;
+                if (this.currentQuestion !== maxQuestions - 1 || !this.showAnswers) {
+                    statisticsDiv.classList.remove('show');
+                    return;
+                }
+                
+                // Показываем статистику
+                statisticsDiv.classList.add('show');
+                
+                let statisticsHTML = `
+                    <p>Итоги раунда "${this.currentRound === 1 ? 'РазминОЧКА' : 'КартинОЧКА'}":</p>
+                    <table class="statistics-table">
+                        <thead>
+                            <tr>
+                                <th>Участник</th>
+                                <th>Правильные ответы</th>
+                                <th>Баллы за раунд</th>
+                                <th>Общий балл</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                // Создаем массив для сортировки
+                const participantsArray = Object.keys(results).map(userId => {
+                    const participantData = results[userId];
+                    // Получаем актуальные баллы из текущего состояния
+                    const participantScore = this.scores[userId] || { total: 0, round1: 0, round2: 0 };
+                    
+                    return {
+                        name: participantData.name,
+                        correctAnswers: participantData.correctAnswers || 0,
+                        totalAnswers: participantData.totalAnswers || 0,
+                        roundScore: this.currentRound === 1 ? 
+                            (participantScore.round1 || 0) : 
+                            (participantScore.round2 || 0),
+                        totalScore: participantScore.total || 0,
+                        userId: userId
+                    };
+                });
+                
+                // Сортируем по общему баллу
+                participantsArray.sort((a, b) => b.totalScore - a.totalScore);
+                
+                participantsArray.forEach((participant, index) => {
+                    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+                    
+                    statisticsHTML += `
+                        <tr>
+                            <td><strong>${medal} ${participant.name}</strong></td>
+                            <td>${participant.correctAnswers}/${participant.totalAnswers}</td>
+                            <td><strong>${participant.roundScore}</strong></td>
+                            <td><strong style="color: #27ae60">${participant.totalScore}</strong></td>
+                        </tr>
+                    `;
+                });
+                
+                statisticsHTML += `
+                        </tbody>
+                    </table>
+                `;
+                
+                container.innerHTML = statisticsHTML;
+            }
+            
+            getRandomColor() {
+                const colors = [
+                    '#FF6B6B', '#4ECDC4', '#FFD166', '#06D6A0',
+                    '#118AB2', '#7209B7', '#3A86FF', '#FB5607'
+                ];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            
+            sendCommand(command, data = {}) {
+                if (this.socket && this.socket.connected) {
+                    this.socket.emit(command, data);
+                    console.log(`Отправлена команда: ${command}`, data);
+                } else {
+                    console.error('Не подключено к серверу');
+                    this.showNotification('Ошибка: не подключено к серверу', 'error');
+                }
+            }
+            
+            setupEventListeners() {
+                // Кнопки управления
+                document.getElementById('nextQuestion').addEventListener('click', () => {
+                    this.sendCommand('nextQuestion');
+                });
+                
+                document.getElementById('prevQuestion').addEventListener('click', () => {
+                    this.sendCommand('prevQuestion');
+                });
+                
+                document.getElementById('switchRound1').addEventListener('click', () => {
+                    this.sendCommand('switchRound', { round: 1 });
+                });
+                
+                document.getElementById('switchRound2').addEventListener('click', () => {
+                    this.sendCommand('switchRound', { round: 2 });
+                });
+                
+                // В методе setupEventListeners обновляем обработчик showAnswers
+                document.getElementById('showAnswers').addEventListener('click', () => {
+                    if (this.showAnswers) {
+                        this.sendCommand('hideAnswers');
+                        document.getElementById('videoControls').classList.remove('visible');
+                        this.currentQuestionVideoShown = false;
+                    } else {
+                        // Проверяем, все ли ответили
+                        if (!this.checkAllAnswered()) {
+                            alert('Не все участники ответили на вопрос!');
+                            return;
+                        }
+                        
+                        this.sendCommand('showAnswers');
+                        
+                        // Если это последний вопрос, статистика появится автоматически
+                        const maxQuestions = this.currentRound === 1 ? 12 : 10;
+                        if (this.currentQuestion === maxQuestions - 1) {
+                            // Флаг установится при получении gameState
+                        }
+                    }
+                });
+                
+                document.getElementById('resetRound').addEventListener('click', () => {
+                    if (confirm('Сбросить текущий раунд? ВСЕ участники будут удалены, баллы сброшены.')) {
+                        this.sendCommand('resetRound');
+                    }
+                });
+                
+                document.getElementById('addScoreBtn').addEventListener('click', () => {
+                    const participantSelect = document.getElementById('participantSelect');
+                    const scoreInput = document.getElementById('scoreInput');
+                    
+                    const userId = participantSelect.value;
+                    const points = parseInt(scoreInput.value) || 1;
+                    
+                    if (!userId) {
+                        alert('Выберите участника');
+                        return;
+                    }
+                    
+                    if (this.currentRound !== 2) {
+                        alert('Ручное добавление баллов доступно только для раунда "КартинОЧКА"');
+                        return;
+                    }
+                    
+                    this.socket.emit('addScore', { userId, points });
+                    this.showNotification(`Добавлено ${points} баллов участнику`);
+                });
+
+                document.getElementById('showAnswers').addEventListener('click', () => {
+                    if (this.showAnswers) {
+                        // Если уже показываем ответы, скрываем их
+                        this.sendCommand('hideAnswers');
+                        // Скрываем видео-контролы
+                        document.getElementById('videoControls').classList.remove('visible');
+                        this.currentQuestionVideoShown = false;
+                    } else {
+                        // Проверяем, все ли ответили
+                        if (!this.checkAllAnswered()) {
+                            alert('Не все участники ответили на вопрос!');
+                            return;
+                        }
+                        
+                        // Для последнего вопроса показываем статистику раунда
+                        const maxQuestions = this.currentRound === 1 ? 12 : 10;
+                        const isLastQuestion = this.currentQuestion === maxQuestions - 1;
+                        
+                        if (isLastQuestion) {
+                            this.sendCommand('showAnswers');
+                            // Не сбрасываем флаг видео, чтобы можно было посмотреть
+                        } else {
+                            this.sendCommand('showAnswers');
+                        }
+                    }
+                });
+                document.getElementById('refreshStatsBtn').addEventListener('click', () => {
+                    if (this.roundStatistics) {
+                        this.showRoundStatistics(this.roundStatistics);
+                        this.showNotification('Статистика обновлена');
+                    }
+                });
+                document.getElementById('refreshStatsBtn').addEventListener('click', () => {
+                    // Запрашиваем актуальные данные с сервера
+                    if (this.roundStatistics && this.isLastQuestionReached) {
+                        // Можно отправить запрос на сервер для пересчета статистики
+                        this.socket.emit('refreshStatistics');
+                        this.showNotification('Статистика обновляется...');
+                    }
+                });
+            }
+            
+            setupKeyboardShortcuts() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                        return;
+                    }
+                    
+                    switch(e.key) {
+                        case 'ArrowRight':
+                        case ' ':
+                            e.preventDefault();
+                            this.sendCommand('nextQuestion');
+                            break;
+                        case 'ArrowLeft':
+                            e.preventDefault();
+                            this.sendCommand('prevQuestion');
+                            break;
+                        case '1':
+                            this.sendCommand('switchRound', { round: 1 });
+                            break;
+                        case '2':
+                            this.sendCommand('switchRound', { round: 2 });
+                            break;
+                        case 'a':
+                            // Переключение показа ответов
+                            const showAnswersBtn = document.getElementById('showAnswers');
+                            if (showAnswersBtn) showAnswersBtn.click();
+                            break;
+                    }
+                });
+            }
+            
+            updateStatus(status, text) {
+                const statusElement = document.getElementById('status');
+                statusElement.textContent = text;
+                statusElement.className = `status-value ${status}`;
+            }
+            
+            showNotification(message, type = 'info') {
+                const notification = document.getElementById('notification');
+                const textElement = document.getElementById('notificationText');
+                
+                textElement.textContent = message;
+                
+                const colors = {
+                    info: '#3498db',
+                    success: '#27ae60',
+                    warning: '#f39c12',
+                    error: '#e74c3c'
+                };
+                
+                notification.style.borderLeftColor = colors[type] || colors.info;
+                notification.className = `notification ${type === 'error' ? 'error' : ''}`;
+                
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        }
+        
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', () => {
+            window.quizClient = new QuizClient();
+        });
+    </script>
+</body>
+</html>

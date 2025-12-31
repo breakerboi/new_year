@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1,
+    "text": "Воспроизведите фразу из мема",
+    "memeName": "ВАДИИИИИИИИИИМ АЛЕЕЕЕЕЕЕЕЕЕЕЕ у тебя будильник ебашит",
+    "imageUrl": "/uploads/ques_1.jpg",
+    "description": "",
+    "videoUrl": "/uploads/ques_1.mp4"
+  },
+  {
+    "id": 2,
+    "text": "Какой фразой заканчивается этот мем?",
+    "memeName": "Чувак это репчик",
+    "imageUrl": "/uploads/ques_2.jpg",
+    "description": "",
+    "videoUrl": "/uploads/ques_2.mp4"
+  },
+  {
+    "id": 3,
+    "text": "Из какого сериала этот мем?",
+    "memeName": "В Филадельфии всегда солнечно",
+    "imageUrl": "/uploads/ques_3.jpg",
+    "description": ""
+  },
+  {
+    "id": 4,
+    "text": "Что написано на футболке?",
+    "memeName": "I love Canada",
+    "imageUrl": "/uploads/ques_4.jpg",
+    "description": ""
+  },
+  {
+    "id": 5,
+    "text": "Из какого сериала мем?",
+    "memeName": "Сообщество",
+    "imageUrl": "/uploads/ques_5.jpg",
+    "description": ""
+  },
+  {
+    "id": 6,
+    "text": "Кто пацаны?",
+    "memeName": "Пацаны вообще ребята",
+    "imageUrl": "/uploads/ques_6.jpg",
+    "description": "",
+    "videoUrl": "/uploads/ques_6.mp4"
+  },
+  {
+    "id": 7,
+    "text": "Воспроизведите приветствие героини рекламы, кадр из которой вы видите",
+    "memeName": "Бонжур, епта",
+    "imageUrl": "/uploads/ques_7.jpg",
+    "description": "",
+    "videoUrl": "/uploads/ques_7.mp4"
+  },
+  {
+    "id": 8,
+    "text": "Кадр из клипа на какую песню?",
+    "memeName": "Дискотека Авария – Арам-зам-зам",
+    "imageUrl": "/uploads/ques_8.jpg",
+    "description": "",
+    "videoUrl": "/uploads/ques_8.mp4"
+  },
+  {
+    "id": 9,
+    "text": "Что она сказала?",
+    "memeName": "Да я люблю тебя!",
+    "imageUrl": "/uploads/ques_9.jpg",
+    "description": "",
+    "videoUrl": "/uploads/ques_9.mp4"
+  },
+  {
+    "id": 10,
+    "text": "Кадр из клипа на какую песню?",
+    "memeName": "Тимати – В клубе",
+    "imageUrl": "/uploads/ques_10.jpg",
+    "description": "",
+    "videoUrl": "/uploads/ques_10.mp4"
+  }
+] 

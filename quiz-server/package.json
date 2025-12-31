@@ -1,0 +1,23 @@
+{
+  "name": "quiz-server",
+  "version": "1.0.0",
+  "description": "Сервер для квиза с Telegram ботом",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "upload-help": "node upload-images.js",
+    "setup-images": "echo 'Создайте папку uploads и добавьте туда изображения мемов'",
+    "check-video": "echo 'Поместите видео в папку uploads и укажите пути в round2.json'"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "node-telegram-bot-api": "^0.64.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
